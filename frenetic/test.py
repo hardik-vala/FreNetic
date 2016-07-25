@@ -49,6 +49,18 @@ class FreNeticTest(TestCase):
                               "eng-30-03901548-n", "eng-30-10023039-n", "eng-30-10114209-n"],
                              [syn.sid() for syn in synsets])
 
+    def test_literal_with_pos(self):
+        lit = "moteur"
+
+        asynsets = self.fwn.synsets(lit, pos=ADJ)
+        self.assertListEqual(["eng-30-00324481-a", "eng-30-00334245-a"], [syn.sid() for syn in asynsets])
+
+        nsynsets = self.fwn.synsets(lit, pos=NOUN)
+        self.assertListEqual(["eng-30-00572489-n", "eng-30-03287733-n", "eng-30-03789946-n", "eng-30-09359631-n",
+                              "eng-30-11417561-n"], [syn.sid() for syn in nsynsets])
+
+        vsynsets = self.fwn.synsets(lit, pos=VERB)
+        self.assertListEqual([], [syn.sid() for syn in vsynsets])
 
 if __name__ == '__main__':
     main()

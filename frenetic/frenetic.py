@@ -142,15 +142,19 @@ class FreNetic(object):
 
         return None
 
-    def synsets(self, lit):
+    def synsets(self, lit, pos=None):
         """
         Returns the synsets corresponding to the given literal, returning None if none exist.
 
         :param lit: Literal.
+        :param pos: Optional POS tag to filter final synsets.
         :return: List of corresponding synsets, if they exist, None otherwise.
         """
 
         if lit in self._literals:
-            return self._literals[lit]
+            synsets = self._literals[lit]
+            if pos:
+                synsets = [syn for syn in synsets if syn.pos() == pos]
+            return synsets
 
         return None
