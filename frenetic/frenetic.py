@@ -8,6 +8,8 @@ sys.setdefaultencoding('utf-8')
 
 import xml.etree.cElementTree as et
 
+from collections import defaultdict
+
 
 # POS constants.
 ADJ, ADJ_SAT, ADV, NOUN, VERB = 'a', 's', 'r', 'n', 'v'
@@ -84,18 +86,24 @@ class FreNetic(object):
         """
 
         self._synsets = {}
+        self._literals = defaultdict(list)
 
         hypernym_ids = {}
         tree = et.parse(path)
         for synset_el in tree.iter(FreNetic._SYNSET_TAG_NAME):
             sid = synset_el.find(FreNetic._ID_TAG_NAME).text
+
             literals = [lit_el.text for lit_el in synset_el.iter(FreNetic._LIT_TAG_NAME)
                         if lit_el.text != FreNetic._EMPTY_LIT]
+
             defn = synset_el.find(FreNetic._DEF_TAG_NAME).text
             usages = [usage_el.text for usage_el in synset_el.iter(FreNetic._USAGE_TAG_NAME)]
             pos = synset_el.find(FreNetic._POS_TAG_NAME).text
 
             self._synsets[sid] = Synset(sid, literals, defn, usages, pos)
+
+            for lit in literals:
+                self._literals[lit].append(self._synsets[sid])
 
             hypernym_ids[sid] = [ilr_el.text for ilr_el in synset_el.iter(FreNetic._ILR_TAG_NAME)
                                  if ilr_el.get('type') == FreNetic._HYPERNYM_TYPE]
@@ -131,5 +139,18 @@ class FreNetic(object):
 
         if sid in self._synsets:
             return self._synsets[sid]
+
+        return None
+
+    def synsets(self, lit):
+        """
+        Returns the synsets corresponding to the given literal, returning None if none exist.
+
+        :param lit: Literal.
+        :return: List of corresponding synsets, if they exist, None otherwise.
+        """
+
+        if lit in self._literals:
+            return self._literals[lit]
 
         return None

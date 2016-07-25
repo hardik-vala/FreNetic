@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 import random
 
@@ -11,12 +13,11 @@ class FreNeticTest(TestCase):
     fwn = FreNetic(os.path.join("..", "wolf-1.0b4.xml"))
     synset_ids = fwn.ids()
 
-    random.seed(461328)
-
     def test_synset_count(self):
         self.assertEqual(117658, self.fwn.count_synsets())
 
     def test_rand_synset_1(self):
+        random.seed(461328)
         synset = self.fwn.synset(random.choice(self.synset_ids))
 
         self.assertEqual("eng-30-06592421-n", synset.sid())
@@ -29,16 +30,24 @@ class FreNeticTest(TestCase):
         self.assertListEqual(["eng-30-06592078-n"], [hyp.sid() for hyp in synset.hypernyms()])
 
     def test_rand_synset_2(self):
-        random.choice(self.synset_ids)
+        random.seed(7317)
         synset = self.fwn.synset(random.choice(self.synset_ids))
 
-        self.assertEqual("eng-30-03651947-n", synset.sid())
-        self.assertListEqual([], synset.literals())
-        self.assertEqual("(nautical) plumb line for determining depth", synset.defn())
+        self.assertEqual("eng-30-05351968-n", synset.sid())
+        self.assertListEqual(["artère mésentérique inférieure"], synset.literals())
+        self.assertEqual("artère amenant du sang oxygéné au tube digestif", synset.defn())
         self.assertListEqual([], synset.usages())
         self.assertEqual(NOUN, synset.pos())
 
-        self.assertListEqual(["eng-30-03969627-n"], [hyp.sid() for hyp in synset.hypernyms()])
+        self.assertListEqual(["eng-30-05351746-n"], [hyp.sid() for hyp in synset.hypernyms()])
+
+    def test_literal(self):
+        lit = "chien"
+        synsets = self.fwn.synsets(lit)
+
+        self.assertListEqual(["eng-30-02084071-n", "eng-30-02084732-n", "eng-30-02087551-n", "eng-30-02710044-n",
+                              "eng-30-03901548-n", "eng-30-10023039-n", "eng-30-10114209-n"],
+                             [syn.sid() for syn in synsets])
 
 
 if __name__ == '__main__':
