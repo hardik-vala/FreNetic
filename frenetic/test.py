@@ -62,5 +62,13 @@ class FreNeticTest(TestCase):
         vsynsets = self.fwn.synsets(lit, pos=VERB)
         self.assertListEqual([], [syn.sid() for syn in vsynsets])
 
+    def test_non_ascii_literal(self):
+        lit = "mère"
+        synsets = self.fwn.synsets(lit)
+
+        self.assertListEqual(["eng-30-01323493-n", "eng-30-10332385-n", "eng-30-10332861-n", "eng-30-10332953-n"],
+                             [syn.sid() for syn in synsets])
+
+
 if __name__ == '__main__':
     main()

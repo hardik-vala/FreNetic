@@ -160,5 +160,10 @@ class FreNetic(object):
             if pos is not None:
                 synsets = [syn for syn in synsets if syn.pos() == pos]
             return synsets
+        elif unicode(lit) in self._literals:
+            synsets = self._literals[unicode(lit)]
+            if pos is not None:
+                synsets = [syn for syn in synsets if syn.pos() == pos]
+            return synsets
 
         return None
