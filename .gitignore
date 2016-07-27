@@ -1,2 +1,4 @@
+*.pyc
+
 # PyCharm project folder
 .idea/
