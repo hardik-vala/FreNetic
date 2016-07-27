@@ -77,8 +77,9 @@ class FreNetic(object):
     _USAGE_TAG_NAME = "USAGE"
     _POS_TAG_NAME = "POS"
 
-    # Signifier of the hypernyms relation.
+    # Signifier of the hypernym relation.
     _HYPERNYM_TYPE = "hypernym"
+    _INST_HYPERNYM_TYPE = "instance_hypernym"
 
     # Denotes empty literals.
     _EMPTY_LIT = "_EMPTY_"
@@ -109,7 +110,8 @@ class FreNetic(object):
                 self._literals[lit].append(self._synsets[sid])
 
             hypernym_ids[sid] = [ilr_el.text for ilr_el in synset_el.iter(FreNetic._ILR_TAG_NAME)
-                                 if ilr_el.get('type') == FreNetic._HYPERNYM_TYPE]
+                                 if ilr_el.get('type') == FreNetic._HYPERNYM_TYPE
+                                 or ilr_el.get('type') == FreNetic._INST_HYPERNYM_TYPE]
 
         for sid, synset in self._synsets.iteritems():
             synset._hypernyms = [self._synsets[hid] for hid in hypernym_ids[sid]]
@@ -145,7 +147,7 @@ class FreNetic(object):
 
         return None
 
-    def synsets(self, lit):
+    def synsets(self, lit, pos=None):
         """
         Returns the synsets corresponding to the given literal, returning None if none exist.
 
@@ -154,6 +156,9 @@ class FreNetic(object):
         """
 
         if lit in self._literals:
-            return self._literals[lit]
+            synsets = self._literals[lit]
+            if pos is not None:
+                synsets = [syn for syn in synsets if syn.pos() == pos]
+            return synsets
 
         return None
