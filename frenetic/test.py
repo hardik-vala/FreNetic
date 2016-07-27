@@ -13,6 +13,8 @@ class FreNeticTest(TestCase):
     fwn = FreNetic(os.path.join("..", "wolf-1.0b4.xml"))
     synset_ids = fwn.ids()
 
+    entity_synset = fwn.synset("eng-30-00001740-n")
+
     def test_synset_count(self):
         self.assertEqual(117658, self.fwn.count_synsets())
 
@@ -68,6 +70,25 @@ class FreNeticTest(TestCase):
 
         self.assertListEqual(["eng-30-01323493-n", "eng-30-10332385-n", "eng-30-10332861-n", "eng-30-10332953-n"],
                              [syn.sid() for syn in synsets])
+
+    def get_hypernym_path_to_entity(self, synset):
+        def get_hypernym_path_to_entity_helper(synset, hypernyms):
+            for hypernym in synset.hypernyms():
+                if hypernym != self.entity_synset:
+                    hypernyms.append(hypernym)
+                    get_hypernym_path_to_entity_helper(hypernym, hypernyms)
+
+        hypernyms = [synset]
+        get_hypernym_path_to_entity_helper(synset, hypernyms)
+        return hypernyms
+
+    def test_hypernym_path_to_entity(self):
+        # A synset of 'soleil'.
+        synset = self.fwn.synset("eng-30-09450163-n")
+
+        self.assertListEqual(["eng-30-09450163-n", "eng-30-09444100-n", "eng-30-09239740-n", "eng-30-00019128-n",
+                              "eng-30-00003553-n", "eng-30-00002684-n", "eng-30-00001930-n"],
+                              [syn.sid() for syn in self.get_hypernym_path_to_entity(synset)])
 
 
 if __name__ == '__main__':
