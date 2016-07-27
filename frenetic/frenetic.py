@@ -53,6 +53,9 @@ class Synset(object):
 
         return False
 
+    def __repr__(self):
+        return self.__str__()
+
     def __str__(self):
         s = ("Synset(Id: %s, Literals: %s, Def.: %s, Usages: %s, POS: %s" %
              (self._sid, str(self._literals), self._defn, str(self._usages), self._pos))
@@ -142,19 +145,15 @@ class FreNetic(object):
 
         return None
 
-    def synsets(self, lit, pos=None):
+    def synsets(self, lit):
         """
         Returns the synsets corresponding to the given literal, returning None if none exist.
 
         :param lit: Literal.
-        :param pos: Optional POS tag to filter final synsets.
         :return: List of corresponding synsets, if they exist, None otherwise.
         """
 
         if lit in self._literals:
-            synsets = self._literals[lit]
-            if pos:
-                synsets = [syn for syn in synsets if syn.pos() == pos]
-            return synsets
+            return self._literals[lit]
 
         return None
