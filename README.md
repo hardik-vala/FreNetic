@@ -24,3 +24,8 @@ Or retrieve the synsets corresponding to a particular word.
 >>> synsets = fwn.synsets("chien")
 >>> nsynsets = fwn.synsets("chien", pos=NOUN) # Condition on a particular POS tag (ADJ, ADJ_SAT, ADV, NOUN, or VERB)
 ```
+
+## Resources
+
+* [WOLF's official page on Benoît Sagot's homepage](http://alpage.inria.fr/~sagot/wolf-en.html)
+* [Open Multilingual Wordnet](http://compling.hss.ntu.edu.sg/omw/)
