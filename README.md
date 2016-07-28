@@ -25,6 +25,29 @@ Or retrieve the synsets corresponding to a particular word.
 >>> nsynsets = fwn.synsets("chien", pos=NOUN) # Condition on a particular POS tag (ADJ, ADJ_SAT, ADV, NOUN, or VERB)
 ```
 
+Given a synset,
+
+```
+synset = fwn.synset("eng-30-00001740-n")
+```
+
+you can do the following,
+
+```
+>>> synset.sid() #Id
+'eng-30-00001740-n'
+>>> synset.literals() # Literals
+[u'entit\xe9']
+>>> synset.defn() # Definition
+u"concept formulant la cat\xe9gorisation et l'identique des choses de notre environnement"
+>>> synset.usages() # Usages
+[]
+>>> synset.pos() # POS tag
+'n'
+>>> synset.hypernyms() # List of it's direct hypernyms
+[]
+```
+
 ## Resources
 
 * [WOLF's official page on Benoît Sagot's homepage](http://alpage.inria.fr/~sagot/wolf-en.html)
