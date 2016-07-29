@@ -37,7 +37,8 @@ class FreNeticTest(TestCase):
         synset = self.fwn.synset(random.choice(self.synset_ids))
 
         self.assertEqual("eng-30-05351968-n", synset.sid())
-        self.assertListEqual(["artère mésentérique inférieure"], synset.literals())
+        lit = Literal("artère mésentérique inférieure", "0/1:enwikipedia;gwa2012(0.84520285155182772741)")
+        self.assertListEqual([lit], synset.literals())
         self.assertEqual("artère amenant du sang oxygéné au tube digestif", synset.defn())
         self.assertListEqual([], synset.usages())
         self.assertIsNone(synset.bcs())
@@ -50,7 +51,8 @@ class FreNeticTest(TestCase):
         synset = self.fwn.synset(sid)
 
         self.assertEqual("eng-30-00001740-a", synset.sid())
-        self.assertListEqual(["comptable"], synset.literals())
+        lit = Literal("comptable", "2/2:fr.csbgen,fr.csen")
+        self.assertListEqual([lit], synset.literals())
         defn = "(usually followed by `to') having the necessary means or skill or know-how or authority to do something"
         self.assertEqual(defn, synset.defn())
         self.assertListEqual(["able to swim", "she was able to program her computer",
@@ -61,30 +63,30 @@ class FreNeticTest(TestCase):
 
         self.assertListEqual([], [hyp.sid() for hyp in synset.hypernyms()])
 
-    def test_literal(self):
-        lit = "chien"
-        synsets = self.fwn.synsets(lit)
+    def test_lex_span(self):
+        lex_span = "chien"
+        synsets = self.fwn.synsets(lex_span)
 
         self.assertListEqual(["eng-30-02084071-n", "eng-30-02084732-n", "eng-30-02087551-n", "eng-30-02710044-n",
                               "eng-30-03901548-n", "eng-30-10023039-n", "eng-30-10114209-n"],
                              [syn.sid() for syn in synsets])
 
-    def test_literal_with_pos(self):
-        lit = "moteur"
+    def test_lex_span_with_pos(self):
+        lex_span = "moteur"
 
-        asynsets = self.fwn.synsets(lit, pos=ADJ)
+        asynsets = self.fwn.synsets(lex_span, pos=ADJ)
         self.assertListEqual(["eng-30-00324481-a", "eng-30-00334245-a"], [syn.sid() for syn in asynsets])
 
-        nsynsets = self.fwn.synsets(lit, pos=NOUN)
+        nsynsets = self.fwn.synsets(lex_span, pos=NOUN)
         self.assertListEqual(["eng-30-00572489-n", "eng-30-03287733-n", "eng-30-03789946-n", "eng-30-09359631-n",
                               "eng-30-11417561-n"], [syn.sid() for syn in nsynsets])
 
-        vsynsets = self.fwn.synsets(lit, pos=VERB)
+        vsynsets = self.fwn.synsets(lex_span, pos=VERB)
         self.assertListEqual([], [syn.sid() for syn in vsynsets])
 
-    def test_non_ascii_literal(self):
-        lit = "mère"
-        synsets = self.fwn.synsets(lit)
+    def test_non_ascii_lex_span(self):
+        lex_span = "mère"
+        synsets = self.fwn.synsets(lex_span)
 
         self.assertListEqual(["eng-30-01323493-n", "eng-30-10332385-n", "eng-30-10332861-n", "eng-30-10332953-n"],
                              [syn.sid() for syn in synsets])

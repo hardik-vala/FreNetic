@@ -15,6 +15,37 @@ from collections import defaultdict
 ADJ, ADJ_SAT, ADV, NOUN, VERB = 'a', 's', 'r', 'n', 'v'
 
 
+class Literal(object):
+    """
+    Literal with span and lnote.
+    """
+
+    def __init__(self, span, lnote):
+        self._span = span
+        self._lnote = lnote
+
+    def span(self):
+        return self._span
+
+    def lnote(self):
+        return self._lnote
+
+    def __eq__(self, other):
+        if isinstance(other, Literal):
+            return self._span == other._span and self._lnote == other._lnote
+
+        return False
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        if self._lnote:
+            return "%s (%s)" % (self._span, self._lnote)
+
+        return self._span
+
+
 class Synset(object):
     """
     Synset, complete with Id, list of literals, definition, list of usages, BCS, POS, and list of hypernyms (if any).
@@ -82,11 +113,14 @@ class FreNetic(object):
     _BCS_TAG_NAME = "BCS"
     _POS_TAG_NAME = "POS"
 
-    # Signifier of the hypernym relation.
+    # lnote attribute name in .xml dump of WOLF.
+    _LNOTE_ATT = "lnote"
+
+    # Signifier of the hypernym relation in .xml dump of WOLF.
     _HYPERNYM_TYPE = "hypernym"
     _INST_HYPERNYM_TYPE = "instance_hypernym"
 
-    # Denotes empty literals.
+    # Denotes empty literals in .xml dump of WOLF.
     _EMPTY_LIT = "_EMPTY_"
 
     def __init__(self, path):
@@ -95,15 +129,19 @@ class FreNetic(object):
         """
 
         self._synsets = {}
-        self._literals = defaultdict(list)
+        self._lex_spans = defaultdict(list)
 
         hypernym_ids = {}
         tree = et.parse(path)
         for synset_el in tree.iter(FreNetic._SYNSET_TAG_NAME):
             sid = synset_el.find(FreNetic._ID_TAG_NAME).text.strip()
 
-            literals = [lit_el.text.strip() for lit_el in synset_el.iter(FreNetic._LIT_TAG_NAME)
-                        if lit_el.text and lit_el.text.strip() != FreNetic._EMPTY_LIT]
+            literals = []
+            for lit_el in synset_el.iter(FreNetic._LIT_TAG_NAME):
+                if lit_el.text and lit_el.text.strip() != FreNetic._EMPTY_LIT:
+                    span = lit_el.text.strip()
+                    lnote = lit_el.get('lnote')
+                    literals.append(Literal(span, lnote))
 
             defn = synset_el.find(FreNetic._DEF_TAG_NAME).text.strip()
             usages = [usage_el.text.strip() for usage_el in synset_el.iter(FreNetic._USAGE_TAG_NAME)]
@@ -116,7 +154,7 @@ class FreNetic(object):
             self._synsets[sid] = Synset(sid, literals, defn, usages, bcs, pos)
 
             for lit in literals:
-                self._literals[lit].append(self._synsets[sid])
+                self._lex_spans[lit.span()].append(self._synsets[sid])
 
             hypernym_ids[sid] = [ilr_el.text.strip() for ilr_el in synset_el.iter(FreNetic._ILR_TAG_NAME)
                                  if ilr_el.get('type') == FreNetic._HYPERNYM_TYPE
@@ -156,21 +194,21 @@ class FreNetic(object):
 
         return None
 
-    def synsets(self, lit, pos=None):
+    def synsets(self, lex_span, pos=None):
         """
-        Returns the synsets corresponding to the given literal, returning None if none exist.
+        Returns the synsets corresponding to the given lexical span, returning None if none exist.
 
-        :param lit: Literal.
+        :param lex_span: Lexical span.
         :return: List of corresponding synsets, if they exist, None otherwise.
         """
 
-        if lit in self._literals:
-            synsets = self._literals[lit]
+        if lex_span in self._lex_spans:
+            synsets = self._lex_spans[lex_span]
             if pos is not None:
                 synsets = [syn for syn in synsets if syn.pos() == pos]
             return synsets
-        elif unicode(lit) in self._literals:
-            synsets = self._literals[unicode(lit)]
+        elif unicode(lex_span) in self._lex_spans:
+            synsets = self._lex_spans[unicode(lex_span)]
             if pos is not None:
                 synsets = [syn for syn in synsets if syn.pos() == pos]
             return synsets
