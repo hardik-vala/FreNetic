@@ -17,14 +17,15 @@ ADJ, ADJ_SAT, ADV, NOUN, VERB = 'a', 's', 'r', 'n', 'v'
 
 class Synset(object):
     """
-    Synset, complete with Id, list of literals, definition, list of usages, POS, and list of hypernyms (if any).
+    Synset, complete with Id, list of literals, definition, list of usages, BCS, POS, and list of hypernyms (if any).
     """
 
-    def __init__(self, sid, literals, defn, usages, pos):
+    def __init__(self, sid, literals, defn, usages, bcs, pos):
         self._sid = sid
         self._literals = literals
         self._defn = defn
         self._usages = usages
+        self._bcs = bcs
         self._pos = pos
 
         self._hypernyms = None
@@ -40,6 +41,9 @@ class Synset(object):
 
     def usages(self):
         return self._usages
+
+    def bcs(self):
+        return self._bcs
 
     def pos(self):
         return self._pos
@@ -75,6 +79,7 @@ class FreNetic(object):
     _LIT_TAG_NAME = "LITERAL"
     _DEF_TAG_NAME = "DEF"
     _USAGE_TAG_NAME = "USAGE"
+    _BCS_TAG_NAME = "BCS"
     _POS_TAG_NAME = "POS"
 
     # Signifier of the hypernym relation.
@@ -95,21 +100,25 @@ class FreNetic(object):
         hypernym_ids = {}
         tree = et.parse(path)
         for synset_el in tree.iter(FreNetic._SYNSET_TAG_NAME):
-            sid = synset_el.find(FreNetic._ID_TAG_NAME).text
+            sid = synset_el.find(FreNetic._ID_TAG_NAME).text.strip()
 
-            literals = [lit_el.text for lit_el in synset_el.iter(FreNetic._LIT_TAG_NAME)
-                        if lit_el.text != FreNetic._EMPTY_LIT]
+            literals = [lit_el.text.strip() for lit_el in synset_el.iter(FreNetic._LIT_TAG_NAME)
+                        if lit_el.text and lit_el.text.strip() != FreNetic._EMPTY_LIT]
 
-            defn = synset_el.find(FreNetic._DEF_TAG_NAME).text
-            usages = [usage_el.text for usage_el in synset_el.iter(FreNetic._USAGE_TAG_NAME)]
-            pos = synset_el.find(FreNetic._POS_TAG_NAME).text
+            defn = synset_el.find(FreNetic._DEF_TAG_NAME).text.strip()
+            usages = [usage_el.text.strip() for usage_el in synset_el.iter(FreNetic._USAGE_TAG_NAME)]
 
-            self._synsets[sid] = Synset(sid, literals, defn, usages, pos)
+            bcs_el = synset_el.find(FreNetic._BCS_TAG_NAME)
+            bcs = int(bcs_el.text) if bcs_el is not None else None
+
+            pos = synset_el.find(FreNetic._POS_TAG_NAME).text.strip()
+
+            self._synsets[sid] = Synset(sid, literals, defn, usages, bcs, pos)
 
             for lit in literals:
                 self._literals[lit].append(self._synsets[sid])
 
-            hypernym_ids[sid] = [ilr_el.text for ilr_el in synset_el.iter(FreNetic._ILR_TAG_NAME)
+            hypernym_ids[sid] = [ilr_el.text.strip() for ilr_el in synset_el.iter(FreNetic._ILR_TAG_NAME)
                                  if ilr_el.get('type') == FreNetic._HYPERNYM_TYPE
                                  or ilr_el.get('type') == FreNetic._INST_HYPERNYM_TYPE]
 

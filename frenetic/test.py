@@ -27,6 +27,7 @@ class FreNeticTest(TestCase):
         self.assertEqual("concept album compiling a performer's work or work supporting some worthy cause",
                          synset.defn())
         self.assertListEqual([], synset.usages())
+        self.assertIsNone(synset.bcs())
         self.assertEqual(NOUN, synset.pos())
 
         self.assertListEqual(["eng-30-06592078-n"], [hyp.sid() for hyp in synset.hypernyms()])
@@ -39,9 +40,26 @@ class FreNeticTest(TestCase):
         self.assertListEqual(["artère mésentérique inférieure"], synset.literals())
         self.assertEqual("artère amenant du sang oxygéné au tube digestif", synset.defn())
         self.assertListEqual([], synset.usages())
+        self.assertIsNone(synset.bcs())
         self.assertEqual(NOUN, synset.pos())
 
         self.assertListEqual(["eng-30-05351746-n"], [hyp.sid() for hyp in synset.hypernyms()])
+
+    def test_rand_synset_3(self):
+        sid = "eng-30-00001740-a"
+        synset = self.fwn.synset(sid)
+
+        self.assertEqual("eng-30-00001740-a", synset.sid())
+        self.assertListEqual(["comptable"], synset.literals())
+        defn = "(usually followed by `to') having the necessary means or skill or know-how or authority to do something"
+        self.assertEqual(defn, synset.defn())
+        self.assertListEqual(["able to swim", "she was able to program her computer",
+                              "we were at last able to buy a car", "able to get a grant for the project"],
+                             synset.usages())
+        self.assertEqual(3, synset.bcs())
+        self.assertEqual(ADJ, synset.pos())
+
+        self.assertListEqual([], [hyp.sid() for hyp in synset.hypernyms()])
 
     def test_literal(self):
         lit = "chien"
