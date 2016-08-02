@@ -15,7 +15,7 @@ Retrieve a synset with a given Id.
 
 ```
 >>> fwn.synset("eng-30-00001740-n") # The 'entity' sysnet
-Synset(Id: eng-30-00001740-n, Literals: [u'entit\\xe9'], Def.: concept formulant la cat\xc3\xa9gorisation et l'identique des choses de notre environnement, Usages: [], POS: n)
+Synset(Id: eng-30-00001740-n, Literals: [entité (96/4:fr.csen,fr.rocsen,fr.roen,enwikipedia;gwa2012(0.86013904790866246852);lrec12mllexwn(1.548);ManVal2012OK)], Def.: concept formulant la catégorisation et l'identique des choses de notre environnement, Usages: [], POS: n)
 ```
 
 Or retrieve the synsets corresponding to a particular word.
@@ -37,11 +37,13 @@ you can do the following,
 >>> synset.sid() #Id
 'eng-30-00001740-n'
 >>> synset.literals() # Literals
-[u'entit\xe9']
+[entité (96/4:fr.csen,fr.rocsen,fr.roen,enwikipedia;gwa2012(0.86013904790866246852);lrec12mllexwn(1.548);ManVal2012OK)]
 >>> synset.defn() # Definition
 u"concept formulant la cat\xe9gorisation et l'identique des choses de notre environnement"
 >>> synset.usages() # Usages
 []
+>>> synset.bcs()
+2
 >>> synset.pos() # POS tag
 'n'
 >>> synset.hypernyms() # List of it's direct hypernyms
