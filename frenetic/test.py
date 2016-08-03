@@ -31,6 +31,7 @@ class FreNeticTest(TestCase):
         self.assertEqual(NOUN, synset.pos())
 
         self.assertListEqual(["eng-30-06592078-n"], [hyp.sid() for hyp in synset.hypernyms()])
+        self.assertListEqual([], [hyp.sid() for hyp in synset.inst_hypernyms()])
 
     def test_rand_synset_2(self):
         random.seed(7317)
@@ -45,6 +46,7 @@ class FreNeticTest(TestCase):
         self.assertEqual(NOUN, synset.pos())
 
         self.assertListEqual(["eng-30-05351746-n"], [hyp.sid() for hyp in synset.hypernyms()])
+        self.assertListEqual([], [hyp.sid() for hyp in synset.inst_hypernyms()])
 
     def test_rand_synset_3(self):
         sid = "eng-30-00001740-a"
@@ -62,6 +64,26 @@ class FreNeticTest(TestCase):
         self.assertEqual(ADJ, synset.pos())
 
         self.assertListEqual([], [hyp.sid() for hyp in synset.hypernyms()])
+        self.assertListEqual([], [hyp.sid() for hyp in synset.inst_hypernyms()])
+
+    def test_rand_synset_4(self):
+        # Soleil.
+        sid = "eng-30-09450163-n"
+        synset = self.fwn.synset(sid)
+
+        self.assertEqual("eng-30-09450163-n", synset.sid())
+        lit = Literal("soleil", "gwa2012(0.35996127512235881474);lrec12mllexwn(2.490)")
+        self.assertListEqual([lit], synset.literals())
+        defn = "the star that is the source of light and heat for the planets in the solar system"
+        self.assertEqual(defn, synset.defn())
+        self.assertListEqual(["the sun contains 99.85% of the mass in the solar system",
+                              "the Earth revolves around the Sun"],
+                             synset.usages())
+        self.assertIsNone(synset.bcs())
+        self.assertEqual(NOUN, synset.pos())
+
+        self.assertListEqual(["eng-30-09444100-n"], [hyp.sid() for hyp in synset.hypernyms()])
+        self.assertListEqual(["eng-30-09444100-n"], [hyp.sid() for hyp in synset.inst_hypernyms()])
 
     def test_lex_span(self):
         lex_span = "chien"

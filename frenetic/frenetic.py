@@ -60,6 +60,7 @@ class Synset(object):
         self._pos = pos
 
         self._hypernyms = None
+        self._inst_hypernyms = None
 
     def sid(self):
         return self._sid
@@ -82,6 +83,9 @@ class Synset(object):
     def hypernyms(self):
         return self._hypernyms
 
+    def inst_hypernyms(self):
+        return self._inst_hypernyms
+
     def __eq__(self, other):
         if isinstance(other, Synset):
             return self._sid == other._sid
@@ -95,7 +99,8 @@ class Synset(object):
         s = ("Synset(Id: %s, Literals: %s, Def.: %s, Usages: %s, POS: %s" %
              (self._sid, str(self._literals), self._defn, str(self._usages), self._pos))
 
-        return s + (", Hypernyms: %s" % str([h._sid for h in self._hypernyms]) if self._hypernyms else "") + ")"
+        s += (", Hypernyms: %s" % str([h._sid for h in self._hypernyms]) if self._hypernyms else "")
+        return s + (", Instance Hypernyms: %s" % str([h._sid for h in self._inst_hypernyms]) if self._inst_hypernyms else "") + ")"
 
 
 class FreNetic(object):
@@ -131,7 +136,7 @@ class FreNetic(object):
         self._synsets = {}
         self._lex_spans = defaultdict(list)
 
-        hypernym_ids = {}
+        hypernym_ids, inst_hypernym_ids = {}, {}
         tree = et.parse(path)
         for synset_el in tree.iter(FreNetic._SYNSET_TAG_NAME):
             sid = synset_el.find(FreNetic._ID_TAG_NAME).text.strip()
@@ -156,12 +161,19 @@ class FreNetic(object):
             for lit in literals:
                 self._lex_spans[lit.span()].append(self._synsets[sid])
 
-            hypernym_ids[sid] = [ilr_el.text.strip() for ilr_el in synset_el.iter(FreNetic._ILR_TAG_NAME)
-                                 if ilr_el.get('type') == FreNetic._HYPERNYM_TYPE
-                                 or ilr_el.get('type') == FreNetic._INST_HYPERNYM_TYPE]
+            hypernym_ids[sid], inst_hypernym_ids[sid] = [], []
+            for ilr_el in synset_el.iter(FreNetic._ILR_TAG_NAME):
+                if ilr_el.get('type') == FreNetic._HYPERNYM_TYPE:
+                    hypernym_ids[sid].append(ilr_el.text.strip())
+
+                if ilr_el.get('type') == FreNetic._INST_HYPERNYM_TYPE:
+                    span = ilr_el.text.strip()
+                    hypernym_ids[sid].append(span)
+                    inst_hypernym_ids[sid].append(span)
 
         for sid, synset in self._synsets.iteritems():
             synset._hypernyms = [self._synsets[hid] for hid in hypernym_ids[sid]]
+            synset._inst_hypernyms = [self._synsets[hid] for hid in inst_hypernym_ids[sid]]
 
     def ids(self):
         """
