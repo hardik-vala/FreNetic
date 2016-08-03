@@ -46,7 +46,9 @@ u"concept formulant la cat\xe9gorisation et l'identique des choses de notre envi
 2
 >>> synset.pos() # POS tag
 'n'
->>> synset.hypernyms() # List of it's direct hypernyms
+>>> synset.hypernyms() # List of it's direct hypernyms (includes instance hypernyms)
+[]
+>>> synset.hypernyms() # List of it's direct instance hypernyms
 []
 ```
 
