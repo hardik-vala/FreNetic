@@ -4,7 +4,7 @@ Python API for [WOLF](http://alpage.inria.fr/~sagot/wolf-en.html), a free French
 
 ## Example
 
-First, load WOLF.
+First, load WOLF (An XML dump can be found [here](http://alpage.inria.fr/~sagot/wolf-en.html)).
 
 ```
 >>> from frenetic import *
