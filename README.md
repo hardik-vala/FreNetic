@@ -56,3 +56,7 @@ u"concept formulant la cat\xe9gorisation et l'identique des choses de notre envi
 
 * [WOLF's official page on Benoît Sagot's homepage](http://alpage.inria.fr/~sagot/wolf-en.html)
 * [Open Multilingual Wordnet](http://compling.hss.ntu.edu.sg/omw/)
+
+## License
+
+MIT
