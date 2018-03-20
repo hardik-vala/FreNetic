@@ -3,8 +3,6 @@ A very simple API for the WOLF French WordNet: http://alpage.inria.fr/~sagot/wol
 """
 
 import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 import xml.etree.cElementTree as et
 
