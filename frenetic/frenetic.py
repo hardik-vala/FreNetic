@@ -169,7 +169,7 @@ class FreNetic(object):
                     hypernym_ids[sid].append(span)
                     inst_hypernym_ids[sid].append(span)
 
-        for sid, synset in self._synsets.iteritems():
+        for sid, synset in self._synsets.items():
             synset._hypernyms = [self._synsets[hid] for hid in hypernym_ids[sid]]
             synset._inst_hypernyms = [self._synsets[hid] for hid in inst_hypernym_ids[sid]]
 
