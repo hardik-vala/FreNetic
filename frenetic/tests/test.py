@@ -10,7 +10,7 @@ from frenetic import *
 
 class FreNeticTest(TestCase):
 
-    fwn = FreNetic(os.path.join("..", "wolf-1.0b4.xml"))
+    fwn = FreNetic(os.path.join("frenetic", "data", "wolf-1.0b4.xml"))
     synset_ids = fwn.ids()
 
     entity_synset = fwn.synset("eng-30-00001740-n")
@@ -20,7 +20,7 @@ class FreNeticTest(TestCase):
 
     def test_rand_synset_1(self):
         random.seed(461328)
-        synset = self.fwn.synset(random.choice(self.synset_ids))
+        synset = self.fwn.synset(random.choice(list(self.synset_ids)))
 
         self.assertEqual("eng-30-06592421-n", synset.sid())
         self.assertListEqual([], synset.literals())
@@ -35,7 +35,7 @@ class FreNeticTest(TestCase):
 
     def test_rand_synset_2(self):
         random.seed(7317)
-        synset = self.fwn.synset(random.choice(self.synset_ids))
+        synset = self.fwn.synset(random.choice(list(self.synset_ids)))
 
         self.assertEqual("eng-30-05351968-n", synset.sid())
         lit = Literal("artère mésentérique inférieure", "0/1:enwikipedia;gwa2012(0.84520285155182772741)")

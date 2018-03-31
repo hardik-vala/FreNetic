@@ -2,9 +2,8 @@
 A very simple API for the WOLF French WordNet: http://alpage.inria.fr/~sagot/wolf-en.html.
 """
 
+import os
 import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 import xml.etree.cElementTree as et
 
@@ -128,10 +127,13 @@ class FreNetic(object):
     # Denotes empty literals in .xml dump of WOLF.
     _EMPTY_LIT = "_EMPTY_"
 
-    def __init__(self, path):
+    def __init__(self, path=None):
         """
         :param path: Path to WOLF .xml dump.
         """
+        if path is None:
+            path = os.path.join(os.path.dirname(__file__),
+                                'data', 'wolf-1.0b4.xml')
 
         self._synsets = {}
         self._lex_spans = defaultdict(list)
@@ -171,7 +173,7 @@ class FreNetic(object):
                     hypernym_ids[sid].append(span)
                     inst_hypernym_ids[sid].append(span)
 
-        for sid, synset in self._synsets.iteritems():
+        for sid, synset in self._synsets.items():
             synset._hypernyms = [self._synsets[hid] for hid in hypernym_ids[sid]]
             synset._inst_hypernyms = [self._synsets[hid] for hid in inst_hypernym_ids[sid]]
 

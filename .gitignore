@@ -1,4 +1,9 @@
 *.pyc
 
+.eggs/*
+
+# MacOS Specific
+*.DS_Store
+
 # PyCharm project folder
 .idea/
