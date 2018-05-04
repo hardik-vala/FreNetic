@@ -134,7 +134,7 @@ class FreNetic(object):
         """
         if path is None:
             path = os.path.join(os.path.dirname(__file__),
-                                'data', 'wolf-1.0b4.xml')
+                                'data', 'wolf-1.0b4.xml.gz')
 
         self._synsets = {}
         self._lex_spans = defaultdict(list)
@@ -143,7 +143,7 @@ class FreNetic(object):
 
         _, _file_extension = os.path.splitext(path)
         if _file_extension == '.gz':
-            tree = et.fromstring(gzip.open(path,'rb').read())
+            tree = et.fromstring(gzip.open(path, 'rb').read())
         else:
             tree = et.parse(path)
 
