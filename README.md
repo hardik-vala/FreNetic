@@ -11,6 +11,11 @@ First, load WOLF (An XML dump can be found [here](http://alpage.inria.fr/~sagot/
 >>> fwn = FreNetic("/path/to/wolf.xml") # Usually takes a few seconds
 ```
 
+Gzipped files are also supported.
+```
+>>> fwn = FreNetic("/path/to/wolf.xml.gz") # Usually takes a few seconds
+```
+
 Retrieve a synset with a given Id.
 
 ```
