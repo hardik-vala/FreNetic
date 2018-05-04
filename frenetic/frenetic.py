@@ -4,6 +4,7 @@ A very simple API for the WOLF French WordNet: http://alpage.inria.fr/~sagot/wol
 
 import os
 import sys
+import gzip
 
 import xml.etree.cElementTree as et
 
@@ -139,7 +140,13 @@ class FreNetic(object):
         self._lex_spans = defaultdict(list)
 
         hypernym_ids, inst_hypernym_ids = {}, {}
-        tree = et.parse(path)
+
+        _, _file_extension = os.path.splitext(path)
+        if _file_extension == '.gz':
+            tree = et.fromstring(gzip.open(path,'rb').read())
+        else:
+            tree = et.parse(path)
+
         for synset_el in tree.iter(FreNetic._SYNSET_TAG_NAME):
             sid = synset_el.find(FreNetic._ID_TAG_NAME).text.strip()
 
